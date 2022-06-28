@@ -1,5 +1,5 @@
 <?php
-$dsn = "mysql:dbname=moteur-recherche;host=localhost";
-$login = "11813410";
-$mdp = "060893655DF";
+$dsn = "mysql:dbname=stage_fmsh;host=localhost";
+$login = "stage_fmsh";
+$mdp = "YcqB)/)HRB7(.hZo";
 ?>

@@ -56,7 +56,7 @@ def get_large_audio_transcription(path_file):
     filename = Path(path_file).stem
 
     try:
-        f = open("Script/"+filename+".txt", "w")
+        f = open("src/MediaToText/"+filename+".txt", "w")
         f.write(texte_entier)
         f.close()
         print(filename+".txt")
@@ -64,7 +64,6 @@ def get_large_audio_transcription(path_file):
         print("Error")
 
     #return texte_entier
-
 
 get_large_audio_transcription(sys.argv[1])
 

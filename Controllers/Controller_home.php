@@ -8,6 +8,34 @@ class Controller_home extends Controller{
 
   public function action_upload(){
 
+     if(!empty($_FILES['fichier']) && $_POST['type'] != "-") {
+       $tmp_nom = $_FILES['fichier']['tmp_name'];
+       if(move_uploaded_file($tmp_nom, 'src/Upload/'.stripAccents(str_replace(' ', '', $_FILES['fichier']['name'])))){//ajoute le fichier à dossier de stockage du serveur avec la suppression des espaces
+         if ($_POST['type'] == "Média") {
+
+           $command = escapeshellcmd("python Script/SpeechToText.py src/Upload/".stripAccents(str_replace(' ', '', $_FILES['fichier']['name'])));
+           $output = shell_exec($command);
+           $output = trim($output);
+
+
+           $DataFile = file("src/MediaToText/".$output);
+            $tmp = array();
+
+             foreach($DataFile as $name)
+             {
+                 echo utf8_encode($name).'<br>';
+             }
+         } elseif ($_POST['type'] == "Document") {
+
+         }
+       }
+
+     }else{
+       echo "<script>alert(\"Il manque des informations\")</script>";
+       $this->render('home');
+     }
+
+/*
     if(!empty($_FILES['fichier']))
     {
 
@@ -18,14 +46,13 @@ class Controller_home extends Controller{
       $output = shell_exec($command);
       $output = trim($output);
       $filename = "Script/".$output;
-      echo '<iframe width="1" height="1" frameborder="0" src="'.$filename.'"></iframe>';
-      $this->render('home');
 
+
+      $this->render('home');
 
     }else{
-      echo "<script>alert(\"Erreur\")</script>";
-      $this->render('home');
-    }
+
+    }*/
 
   }
 }
