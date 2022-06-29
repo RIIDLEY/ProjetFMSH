@@ -66,4 +66,3 @@ def get_large_audio_transcription(path_file):
     #return texte_entier
 
 get_large_audio_transcription(sys.argv[1])
-
