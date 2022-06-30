@@ -6,6 +6,11 @@ class Controller_home extends Controller{
       $this->render('home');
   }
 
+
+    public function action_test(){
+        print_r($_POST["Tags"]);
+    }
+
   public function action_upload(){
 
      if(!empty($_FILES['fichier']) && $_POST['type'] != "-") {
@@ -20,18 +25,15 @@ class Controller_home extends Controller{
            $output = trim($output);
 
            $m = Model::getModel();
-           $tmp_infos = ['name'=>$_POST["Name"], 'description' =>$_POST["Description"],'filename'=>$idrandom."_".stripAccents(str_replace(' ', '', $_FILES['fichier']['name'])), 'transcriptFile'=>$output,'type'=>pathinfo($_FILES['fichier']['name'])['extension'], 'size'=>$_FILES['fichier']['size']];
+           $tmp_infos = ['name'=>$_POST["Name"], 'description' =>$_POST["Description"],'tags'=>$_POST["Tags"],'filename'=>$idrandom."_".stripAccents(str_replace(' ', '', $_FILES['fichier']['name'])), 'transcriptFile'=>$output,'type'=>pathinfo($_FILES['fichier']['name'])['extension'], 'size'=>$_FILES['fichier']['size']];
 
            $reponseSQL = $m->addDoc($tmp_infos);
 
            $this->indexation($output,$reponseSQL);
 
            echo "<script>alert(\"Done\")</script>";
-            $arraytmp = $m->getMot($reponseSQL);
-           print_r($arraytmp);
-           echo "Min ".$arraytmp[count($arraytmp)-1]["Occurence"];
-           echo "Max ".$arraytmp[0]["Occurence"];
-           echo "test fonction ".getSizeTags($arraytmp[count($arraytmp)-1]["Occurence"],$arraytmp[0]["Occurence"],2);
+           $arraytmp = $m->getMot($reponseSQL);
+           $this->render('cloud',['tab'=>$arraytmp]);
 
          } elseif ($_POST['type'] == "Document") {
 
@@ -78,10 +80,12 @@ class Controller_home extends Controller{
     public function indexation($document, $IDDoc){
         $m = Model::getModel();
         $chemin = "src/MediaToText/" . $document;//generation du chemin
-        $texte = file_get_contents ($chemin);//lecture du fichier
-        $separateurs =  "’'. ,-…][(«»)/\r\n|\n|\r/" ;//caracteres de séparation des mots
-        $tab_toks = $this->explode_bis(mb_strtolower(utf8_encode($texte),'UTF-8'), $separateurs);//séparation
+        $texte = utf8_encode(file_get_contents($chemin));//lecture du fichier
 
+        $separateurs =  "’'. ,-…][(«»)/\r\n|\n|\r/" ;//caracteres de séparation des mots
+
+        $tab_toks = $this->explode_bis(mb_strtolower($texte), $separateurs);//séparation
+        //print_r($tab_toks);
         $tab_new_mots_occurrences = array_count_values ($tab_toks);//compte le nombre d'occurence
 
         foreach($tab_new_mots_occurrences as $k=> $v){//Boucle qui tourne dans le tableau $tab_new_mots_occurrences qui contient le mot avec son occurence et le document dont il provient

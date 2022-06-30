@@ -49,14 +49,14 @@ class Model
     {
 
         try {
-            $requete = $this->bd->prepare('INSERT INTO fichiers_upload (Name,Description,Filename,TranscriptFile,Type,Size) VALUES (:name,:description,:filename,:transcriptFile,:type,:size);  SELECT LAST_INSERT_ID();');
-            $marqueurs = ['name', 'description', 'filename', 'transcriptFile','type', 'size'];
+            $requete = $this->bd->prepare('INSERT INTO fichiers_upload (Name,Description,Tags,Filename,TranscriptFile,Type,Size) VALUES (:name,:description,:tags,:filename,:transcriptFile,:type,:size);  SELECT LAST_INSERT_ID();');
+            $marqueurs = ['name', 'description','tags', 'filename', 'transcriptFile','type', 'size'];
             foreach ($marqueurs as $value) {
                 $requete->bindValue(':' . $value, $infos[$value]);
             }
             $requete->execute();
             $requete->closeCursor();
-            return $this->lastinsert(["name"=>$infos["name"],"size"=>$infos["size"],"filename"=>$infos["filename"]])[0];
+            return $this->lastinsert(["name"=>$infos["name"],"size"=>$infos["size"],"filename"=>$infos["filename"],"tags"=>$infos["tags"]])[0];
         } catch (PDOException $e) {
             die('Echec addDoc, erreur n°' . $e->getCode() . ':' . $e->getMessage());
         }
@@ -80,7 +80,7 @@ class Model
     {
 
         try {
-            $requete = $this->bd->prepare('Select Word, Occurence from indexation WHERE FileID = :fileID ORDER BY Occurence DESC');
+            $requete = $this->bd->prepare('Select Word, Occurence from indexation WHERE FileID = :fileID');
             $requete->bindValue(':fileID', $fileID);
             $requete->execute();
             return $requete->fetchall(PDO::FETCH_ASSOC);
@@ -92,8 +92,8 @@ class Model
     public function lastinsert($infos)
     {
         try {
-            $requete = $this->bd->prepare('SELECT FileID FROM fichiers_upload WHERE Name=:name AND Size=:size AND Filename=:filename');
-            $marqueurs = ['name','size', 'filename'];
+            $requete = $this->bd->prepare('SELECT FileID FROM fichiers_upload WHERE Name=:name AND Size=:size AND Filename=:filename AND Tags=:tags');
+            $marqueurs = ['name','size', 'filename','tags'];
             foreach ($marqueurs as $value) {
                 $requete->bindValue(':' . $value, $infos[$value]);
             }

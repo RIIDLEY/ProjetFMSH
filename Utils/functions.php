@@ -7,7 +7,7 @@ function stripAccents($str) {
 
 
 function getSizeTags($minOccu,$maxOccu,$OccuCourant){
-    $a = ((50-10)/($maxOccu-$minOccu));
-    $b = 10-$a;
+    $a = ((50-15)/($maxOccu-$minOccu));
+    $b = 15-$a;
     return $a*$OccuCourant+$b;
 }
