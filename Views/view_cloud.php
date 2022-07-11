@@ -1,10 +1,11 @@
 <?php
 require('view_begin.php');
 ?>
-<h1>Nuage de mots</h1>
+
 
 
 <div class="grandeDivData">
+    <u><h1>Nuage de mots :</h1></u>
     <?php
     if (isset($tab)){
         $MaxOccu = max(array_column($tab, 'Occurence'));

@@ -62,6 +62,19 @@ class Model
         }
     }
 
+    public function getDocByID($fileID)
+    {
+
+        try {
+            $requete = $this->bd->prepare('Select Name from fichiers_upload WHERE FileID = :fileID');
+            $requete->bindValue(':fileID', $fileID);
+            $requete->execute();
+            return $requete->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            die('Echec getDocByID, erreur n°' . $e->getCode() . ':' . $e->getMessage());
+        }
+    }
+
     public function addMot($infos)
     {
         try {
@@ -104,6 +117,78 @@ class Model
         }
     }
 
+    public function getListMot($mot)
+    {
+
+        try {
+            $requete = $this->bd->prepare('Select * from indexation WHERE Word = :word ORDER BY Occurence DESC');
+            $requete->bindValue(':word', $mot);
+            $requete->execute();
+            return $requete->fetchall(PDO::FETCH_NUM);
+        } catch (PDOException $e) {
+            die('Echec getListMot, erreur n°' . $e->getCode() . ':' . $e->getMessage());
+        }
+    }
+
+    public function getDocumentbyMot($mot)
+    {
+
+        try {
+            $requete = $this->bd->prepare('Select FileID from indexation WHERE Word = :word ORDER BY Occurence DESC');
+            $requete->bindValue(':word', $mot);
+            $requete->execute();
+            return $requete->fetchall(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            die('Echec getDocumentbyMot, erreur n°' . $e->getCode() . ':' . $e->getMessage());
+        }
+    }
+
+    public function getDocumentbyMotV2($ArrayWord)
+    {
+
+        try {
+
+            //$sql = "SELECT FileID FROM `indexation` WHERE Word IN ('problèmes', 'femmes') GROUP BY FileID HAVING COUNT(*) = 2";
+
+            $arrayDocuID = array();
+            $arrayDocuName = array();
+
+            do{
+                $sql = "SELECT FileID FROM indexation WHERE Word IN (";
+
+                for ($i = 0;$i<count($ArrayWord);$i++){
+                    $sql .= "'".$ArrayWord[$i]."'";
+                    if ($i!=count($ArrayWord)-1){
+                        $sql .= ",";
+                    }
+                }
+                $sql .= ") GROUP BY FileID HAVING COUNT(*) = ".count($ArrayWord);
+
+
+
+                $requete = $this->bd->prepare($sql);
+                $requete->execute();
+                $arrayReturnRequete = $requete->fetchall(PDO::FETCH_ASSOC);
+
+                foreach ($arrayReturnRequete as $value){
+                    if (!in_array($value,$arrayDocuID)){
+                        array_push($arrayDocuID,$value);
+                    }
+                }
+                array_pop($ArrayWord);
+            }while(count($ArrayWord)>=1);
+
+            foreach ($arrayDocuID as $value){
+                array_push($arrayDocuName,$this->getDocByID($value["FileID"]));
+            }
+
+
+            return $arrayDocuName;
+
+        } catch (PDOException $e) {
+            die('Echec getDocumentbyMotV2, erreur n°' . $e->getCode() . ':' . $e->getMessage());
+        }
+    }
 
 
 }

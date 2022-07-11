@@ -1,43 +1,41 @@
 <?php
 require('view_begin.php');
 ?>
-    <div class="grandeDivData">
-    <h1>Formulaire d'upload</h1>
-    <form action = "?controller=home&action=upload" method="post" enctype="multipart/form-data">
-
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <input type="text" class="form-control" name="Name" placeholder="Nom du document" required>
-            </div>
-            <div class="form-group col-md-6">
-                <input type="text" class="form-control" name="Description" placeholder="Description" required>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label>Types de document : </label>
-                <select name="type" class="others">
-                    <option class="others">-</option>
-                    <option class="others">Média</option>
-                    <option class="others">Document</option>
-                </select>
-            </div>
-            <div class="form-group col-md-6">
-                <input type="text" name="Tags" data-role="tagsinput" placeholder="Mots-clés" required/>
-            </div>
-        </div>
-
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <input type="file" class="form-control-file" name="fichier">
-            </div>
-        </div>
-        <input type="submit" class="btn btn-primary btn-lg" value="Envoyer"/>
-    </form>
 
 
-    </div>
+    <form class="form-inline" action = "?controller=home&action=recherche" method="post" style="display: inline-block;">
+        <input type="text" name="KeyWords" size="50" placeholder="Mot clés"/>
+        <input type="submit" value="Chercher" class="btn btn-primary mb-2"/></form>
 
+
+    <ul>
+        <?php
+        if (isset($liste)){
+            print_r($liste);
+
+        foreach ($liste as $key => $value){  ?>
+            <li class="list-group-item">Document : <strong><?=$value["Name"]?></strong></li>
+        <?php
+        }
+        } ?>
+    </ul>
+
+    <a href="?controller=upload">upload</a>
+
+
+
+
+<?php
+if (isset($_SESSION['admin'])) {//Si la variable existe
+    if ($_SESSION['admin'] === true) {//si c'est un admin
+        echo '<a href="?controller=home&action=deco">Se deconnecter</a>';//ajoute le bouton de deconnection
+    }else{
+        echo '<a href="?controller=toolsadmin">Connection admin</a>';
+    }
+}else{
+    echo '<a href="?controller=toolsadmin">Connection admin</a>';
+}
+?>
 
 <?php
 require('view_end.php');
