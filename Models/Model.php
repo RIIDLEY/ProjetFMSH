@@ -191,4 +191,75 @@ class Model
     }
 
 
+
+
+    public static function addLogin($infos)
+    {
+        $m = Model::getModel();
+        try {
+            //Préparation de la requête
+            $requete = $m->bd->prepare('INSERT INTO admin (Name, Password) VALUES (:login, :mdp)');
+            //Remplacement des marqueurs de place par les valeurs
+            $marqueurs = ['login', 'mdp'];
+            foreach ($marqueurs as $value) {
+                $requete->bindValue(':' . $value, $infos[$value]);
+            }
+            //Exécution de la requête
+            return $requete->execute();
+        } catch (PDOException $e) {
+            die('Echec addLogin, erreur n°' . $e->getCode() . ':' . $e->getMessage());
+        }
+    }
+
+
+    /**
+     * Méthode permettant d'obtenir le nom des utilisateurs
+     */
+    public function getLogin()
+    {
+
+        try {
+            $requete = $this->bd->prepare('SELECT Name FROM admin');
+            $requete->execute();
+            $reponse = [];
+            while ($ligne = $requete->fetch(PDO::FETCH_ASSOC)) {
+                $reponse[] = $ligne['Name'];
+            }
+            return $reponse;
+        } catch (PDOException $e) {
+            die('Echec getLogin, erreur n°' . $e->getCode() . ':' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Méthode permettant d'obtenir le nombre d'utilisateur
+     */
+    public function getNbLogin()
+    {
+        try {
+            $requete = $this->bd->prepare('SELECT count(*) FROM admin');
+            $requete->execute();
+            return $requete->fetch(PDO::FETCH_NUM);
+        } catch (PDOException $e) {
+            die('Echec getNbLogin, erreur n°' . $e->getCode() . ':' . $e->getMessage());
+        }
+    }
+
+
+    /**
+     * Méthode permettant d'obtenir le mot de passe de l'utilisateur hashé
+     */
+    public function getMDP($user)
+    {
+        try {
+            $requete = $this->bd->prepare('SELECT Password FROM admin WHERE Name = :user');
+            $requete->bindValue(':user', $user);
+            $requete->execute();
+            return $requete->fetch(PDO::FETCH_NUM);
+        } catch (PDOException $e) {
+            die('Echec getMDP, erreur n°' . $e->getCode() . ':' . $e->getMessage());
+        }
+    }
+
+
 }

@@ -1,7 +1,10 @@
 <?php
 require('view_begin.php');
+session_start();
+if (isset($_SESSION['admin'])) {//Si la variable existe
+    if ($_SESSION['admin'] === true) {
 ?>
-    <span class="label label-info">Info Label</span>
+        <a href="?controller=home">Accueil</a>
 
     <div class="grandeDivData container">
     <u><h1>Formulaire d'upload :</h1></u>
@@ -37,10 +40,16 @@ require('view_begin.php');
         <input type="submit" class="btn btn-primary btn-lg" value="Envoyer"/>
     </form>
 
-
     </div>
 
-
 <?php
+    }else{
+        http_response_code(403);
+        die('Forbidden');
+    }
+}else{
+    http_response_code(403);
+    die('Forbidden');
+}
 require('view_end.php');
 ?>
