@@ -3,14 +3,16 @@ require('view_begin.php');
 include 'Utils/import_sigmaJS.php';
 
 ?>
-
-
-    <form class="form-inline" action = "?controller=home&action=recherche" method="post" style="display: inline-block;">
-        <input type="text" name="KeyWords" size="50" placeholder="Mot clés"/>
-        <input type="submit" value="Chercher" class="btn btn-primary mb-2"/></form>
-    <ul>
-        <div id='sigma-container'></div>
-
+    <div class="container">
+        <div class="row">
+            <div class="col grandeDivData">
+                <form class="form-inline" action = "?controller=home&action=recherche" method="post" style="display: inline-block;">
+                    <input type="text" name="KeyWords" size="50" placeholder="Mot clés"/>
+                    <input type="submit" value="Chercher" class="btn btn-primary mb-2"/></form>
+            </div>
+        </div>
+    <div class="row">
+        <div class="divStyle col-md-auto">
         <?php
         if (isset($liste)){
         foreach ($liste as $key => $value){  ?>
@@ -18,20 +20,17 @@ include 'Utils/import_sigmaJS.php';
         <?php
         }?>
             <script>
-
                 var my_javascript_variable = <?php echo json_encode($liste) ?>;
-                console.log(my_javascript_variable[0]);
             </script>
-            <script type="text/javascript" src="Script/GraphReseau.js"></script>
-        <?php } ?></ul>
-
-
+        <?php } ?>
+    </div>
+        <div class="col">
+            <div id='sigma-container'></div>
+        </div>
+    </div>
+    </div>
 
     <a href="?controller=upload">upload</a>
-
-
-
-
 <?php
 if (isset($_SESSION['admin'])) {//Si la variable existe
     if ($_SESSION['admin'] === true) {//si c'est un admin
@@ -44,6 +43,12 @@ if (isset($_SESSION['admin'])) {//Si la variable existe
 }
 ?>
 
+
 <?php
+if (isset($liste)){?>
+    <script type="text/javascript" src="Script/GraphReseau.js"></script>
+
+<?php
+}
 require('view_end.php');
 ?>
