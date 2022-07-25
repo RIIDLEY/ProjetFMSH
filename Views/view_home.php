@@ -30,11 +30,10 @@ include 'Utils/import_sigmaJS.php';
     </div>
     </div>
 
-    <a href="?controller=upload">upload</a>
 <?php
 if (isset($_SESSION['admin'])) {//Si la variable existe
     if ($_SESSION['admin'] === true) {//si c'est un admin
-        echo '<a href="?controller=home&action=deco">Se deconnecter</a>';//ajoute le bouton de deconnection
+        echo '<a href="?controller=toolsadmin">Page Admin</a>';//ajoute le bouton de deconnection
     }else{
         echo '<a href="?controller=toolsadmin">Connection admin</a>';
     }

@@ -17,7 +17,7 @@ class Controller_login extends Controller{
         $mdp_hash = $m->getMdp($listLogin[$i]);
         if(password_verify($_POST['mdp'], $mdp_hash[0])){//verifie si le mot de passe est correct
           $_SESSION['admin'] = true;//modifie la valeur
-          echo '<script type="text/javascript"> alert("Connecté en tant qu\'admin"); </script>';//message de confirmation de bonne connection
+          //echo '<script type="text/javascript"> alert("Connecté en tant qu\'admin"); </script>';//message de confirmation de bonne connection
           $this->render("toolsadmin");
         }
       }
