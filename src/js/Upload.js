@@ -45,15 +45,15 @@ function isDocument(filename) {
 $(function() {
     $('form').submit(function() {
         function failValidation(msg) {
-            alert(msg); // just an alert for now but you can spice this up later
+            alert(msg);
             return false;
         }
         var selectType = document.getElementById('selectid').value;
         var file = $('#InputFile');
         if ( selectType == "Media" && !isMedia(file.val())) {
-            return failValidation('Veuillez selectionner le bon type de fichier.');
+            return failValidation('Veuillez selectionner un fichier audio ou vidéo.');
         }else if (selectType == "Document" && !isDocument(file.val())) {
-            return failValidation('Veuillez selectionner le bon type de fichier.');
+            return failValidation('Veuillez selectionner le bon type de fichier. Type de document autorisé : .txt');
         }
     });
 

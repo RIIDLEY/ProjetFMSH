@@ -24,8 +24,8 @@ if (isset($_SESSION['admin'])) {//Si la variable existe
         <div class="row">
             <div class="col-md-6">
                 <label>Types de document : </label>
-                <select name="type" class="others" id="selectid" onChange = "func()">
-                    <option class="others">-</option>
+                <select name="type" class="others" id="selectid" onChange = "func()" required>
+                    <option value="">-</option>
                     <option value="Media">Média</option>
                     <option value="Document">Document</option>
                 </select>
