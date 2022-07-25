@@ -37,9 +37,6 @@ function isDocument(filename) {
     var ext = getExtension(filename);
     switch (ext.toLowerCase()) {
         case 'txt':
-        case 'doc':
-        case 'docx':
-        case 'pdf':
             return true;
     }
     return false;

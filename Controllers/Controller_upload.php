@@ -90,8 +90,9 @@ class Controller_upload extends Controller{
         if ($type == "Media"){
             $texte = utf8_encode(file_get_contents($document));//lecture du fichier
         }else{
-            $texte = file_get_contents($document);//lecture du fichier
+            $texte = utf8_encode(file_get_contents($document));//lecture du fichier
         }
+        //$this->render('test',['liste'=>$texte]);
 
         $separateurs =  "’'. ,-…][(«»)/\r\n|\n|\r/" ;//caracteres de séparation des mots
 
