@@ -1,5 +1,6 @@
 <?php
-
+include "vendor/autoload.php";
+use Spatie\PdfToText\Pdf;
 class Controller_upload extends Controller{
 
   public function action_default(){
@@ -30,7 +31,7 @@ class Controller_upload extends Controller{
 
            $reponseSQL = $m->addDoc($tmp_infos);
 
-           $this->indexation("src/MediaToText/".$output,$reponseSQL,"Media");
+           $this->indexation("src/MediaToText/".$output,$reponseSQL,"Media",false);
 
            //echo "<script>alert(\"Done\")</script>";
 
@@ -42,8 +43,8 @@ class Controller_upload extends Controller{
                $tmp_infos = ['name'=>$_POST["Name"], 'description' =>$_POST["Description"],'tags'=>$_POST["Tags"],'filename'=>$idrandom."_".stripAccents(str_replace(' ', '', $_FILES['fichier']['name'])), 'transcriptFile'=>"None",'type'=>pathinfo($_FILES['fichier']['name'])['extension'], 'size'=>$_FILES['fichier']['size']];
 
                $reponseSQL = $m->addDoc($tmp_infos);
-
-               $this->indexation("src/Upload/".$idrandom."_".stripAccents(str_replace(' ', '', $_FILES['fichier']['name'])),$reponseSQL,"Document");
+               $extension = pathinfo("src/Upload/".$idrandom."_".stripAccents(str_replace(' ', '', $_FILES['fichier']['name'])), PATHINFO_EXTENSION);
+               $this->indexation("src/Upload/".$idrandom."_".stripAccents(str_replace(' ', '', $_FILES['fichier']['name'])),$reponseSQL,"Document",$extension);
 
                //echo "<script>alert(\"Done\")</script>";
 
@@ -85,18 +86,20 @@ class Controller_upload extends Controller{
         return $tab_tok;
     }
 
-    public function indexation($document, $IDDoc,$type){
+    public function indexation($document, $IDDoc,$type,$PDF){
         $m = Model::getModel();
         if ($type == "Media"){
             $texte = utf8_encode(file_get_contents($document));//lecture du fichier
+        }elseif ($PDF==="pdf"){
+            //https://stackoverflow.com/questions/67584969/spatie-pdftotext-cant-find-path-of-library-windows/67587222#67587222
+            $texte = remove_emoji(stripAccents(utf8_encode((new Pdf("Script/pdftotext.exe"))->setPdf($document)->text())));
         }else{
-            $texte = utf8_encode(file_get_contents($document));//lecture du fichier
+            $texte = file_get_contents($document);//lecture du fichier
         }
-        //$this->render('test',['liste'=>$texte]);
 
         $separateurs =  "’'. ,-…][(«»)/\r\n|\n|\r/" ;//caracteres de séparation des mots
 
-        $tab_toks = $this->explode_bis(mb_strtolower($texte,"UTF-8"), $separateurs);//séparation
+        $tab_toks = $this->explode_bis(mb_strtolower(stripAccents($texte),"UTF-8"), $separateurs);//séparation
 
             $command = escapeshellcmd("python Script/lemma.py ".implode(" ", $tab_toks));
             $output = shell_exec($command);

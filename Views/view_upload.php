@@ -37,7 +37,7 @@ if (isset($_SESSION['admin'])) {//Si la variable existe
 
         <div class="row" style="padding: 2%">
             <div class="col-md-6">
-                <input id="InputFile" type="file" class="form-control-file" name="fichier" accept=".txt">
+                <input id="InputFile" type="file" class="form-control-file" name="fichier" accept=".txt,.pdf">
             </div>
         </div>
         <input type="submit" class="btn btn-primary btn-lg" value="Envoyer"/>
@@ -45,7 +45,7 @@ if (isset($_SESSION['admin'])) {//Si la variable existe
 
 
         <p>Type de média autorisé : tout</p>
-        <p>Type de document autorisé : .txt</p>
+        <p>Type de document autorisé : .txt et .pdf</p>
     </div>
 
 <?php

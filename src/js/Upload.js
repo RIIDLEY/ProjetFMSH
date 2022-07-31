@@ -5,7 +5,7 @@ function func() {
     }
     if (document.getElementById('selectid').value == "Document") {
         document.getElementById('InputFile').removeAttribute("accept")
-        document.getElementById("InputFile").setAttribute("accept", ".pdf,.doc,.docx,.txt");
+        document.getElementById("InputFile").setAttribute("accept", ".pdf,.txt");
     }
 }
 
@@ -37,6 +37,7 @@ function isDocument(filename) {
     var ext = getExtension(filename);
     switch (ext.toLowerCase()) {
         case 'txt':
+        case 'pdf':
             return true;
     }
     return false;
