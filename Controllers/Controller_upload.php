@@ -26,30 +26,31 @@ class Controller_upload extends Controller{
            $output = shell_exec($command);
            $output = trim($output);
 
-           $m = Model::getModel();
-           $tmp_infos = ['name'=>$_POST["Name"], 'description' =>$_POST["Description"],'tags'=>$_POST["Tags"],'filename'=>$idrandom."_".stripAccents(str_replace(' ', '', $_FILES['fichier']['name'])), 'transcriptFile'=>$output,'type'=>pathinfo($_FILES['fichier']['name'])['extension'], 'size'=>$_FILES['fichier']['size']];
+           if($output==="Error"){
+               echo "<script>alert(\"Une erreure c'est produite lors de la transcription.\")</script>";
+               $this->render('upload');
+           }else{
+               $m = Model::getModel();
+               $tmp_infos = ['name'=>$_POST["Name"], 'description' =>$_POST["Description"],'tags'=>$_POST["Tags"],'filename'=>$idrandom."_".stripAccents(str_replace(' ', '', $_FILES['fichier']['name'])), 'transcriptFile'=>$output,'type'=>pathinfo($_FILES['fichier']['name'])['extension'], 'size'=>$_FILES['fichier']['size']];
 
-           $reponseSQL = $m->addDoc($tmp_infos);
+               $IdDocu = $m->addDoc($tmp_infos);
 
-           $this->indexation("src/MediaToText/".$output,$reponseSQL,"Media",false);
+               $this->indexation("src/MediaToText/".$output,$IdDocu,"Media",false);
 
-           //echo "<script>alert(\"Done\")</script>";
-
-           $arraytmp = $m->getMot($reponseSQL);
-           $this->render('cloud',['tab'=>$arraytmp]);
+               $this->PageInfo($IdDocu);
+           }
 
          } elseif ($_POST['type'] == "Document") {
                $m = Model::getModel();
-               $tmp_infos = ['name'=>$_POST["Name"], 'description' =>$_POST["Description"],'tags'=>$_POST["Tags"],'filename'=>$idrandom."_".stripAccents(str_replace(' ', '', $_FILES['fichier']['name'])), 'transcriptFile'=>"None",'type'=>pathinfo($_FILES['fichier']['name'])['extension'], 'size'=>$_FILES['fichier']['size']];
+               $filename = $idrandom."_".stripAccents(str_replace(' ', '', $_FILES['fichier']['name']));
+               $tmp_infos = ['name'=>$_POST["Name"], 'description' =>$_POST["Description"],'tags'=>$_POST["Tags"],'filename'=>$filename, 'transcriptFile'=>"None",'type'=>pathinfo($_FILES['fichier']['name'])['extension'], 'size'=>$_FILES['fichier']['size']];
 
-               $reponseSQL = $m->addDoc($tmp_infos);
-               $extension = pathinfo("src/Upload/".$idrandom."_".stripAccents(str_replace(' ', '', $_FILES['fichier']['name'])), PATHINFO_EXTENSION);
-               $this->indexation("src/Upload/".$idrandom."_".stripAccents(str_replace(' ', '', $_FILES['fichier']['name'])),$reponseSQL,"Document",$extension);
+               $IdDocu = $m->addDoc($tmp_infos);
+               $extension = pathinfo("src/Upload/".$filename, PATHINFO_EXTENSION);
+               $this->indexation("src/Upload/".$filename,$IdDocu,"Document",$extension);
 
-               //echo "<script>alert(\"Done\")</script>";
-
-               $arraytmp = $m->getMot($reponseSQL);
-               $this->render('cloud',['tab'=>$arraytmp]);
+               $arraytmp = $m->getMot($IdDocu);
+               $this->render('cloud',['tabWord'=>$arraytmp,'PathFile'=>"src/Upload/".$filename]);
          }
        }else{
            echo "<script>alert(\"Une erreure c'est produite lors de l'upload\")</script>";
@@ -115,6 +116,25 @@ class Controller_upload extends Controller{
         }
 
     }
-}
 
+    public function PageInfo($IdFile)
+    {
+        $m = Model::getModel();
+        $infoFile = $m->getDocByID($IdFile);
+
+        $pathFile = "src/Upload/".$infoFile["Filename"];
+        $extension = pathinfo($pathFile, PATHINFO_EXTENSION);
+        //$this->render("test",["liste"=>$infoFile]);
+        if ($infoFile["Type"] != "pdf" and $infoFile["Type"] != "txt"){
+            $TranscriptFile = "src/MediaToText/".$infoFile["TranscriptFile"];
+        }else{
+            $TranscriptFile = "None";
+        }
+
+        $arrayKeyWord = $m->getMot($IdFile);
+
+        $this->render('cloud',['Name'=>$infoFile["Name"],'tabWord'=>$arrayKeyWord,'PathFile'=>$pathFile,'Description'=>$infoFile["Description"],'Tags'=>$infoFile["Tags"],'TranscriptFile'=>$TranscriptFile,'Extension'=>$extension]);
+    }
+}
+//,["Name"=>$pathFile["Name"],'tabWord'=>$arrayKeyWord,'PathFile'=>$pathFile,'Description'=>$infoFile["Description"],'Tags'=>$infoFile["Tags"],'Transcript'=>$TranscriptFile,'Extension'=>$extension]
 ?>

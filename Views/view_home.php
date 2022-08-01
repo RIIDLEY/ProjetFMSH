@@ -16,7 +16,7 @@ include 'Utils/import_sigmaJS.php';
         <?php
         if (isset($liste)){
         foreach ($liste as $key => $value){  ?>
-            <li class="list-group-item">Document : <strong><?=$value["Name"]?></strong></li>
+            <li class="list-group-item">Document : <strong><?=$value?></strong></li>
         <?php
         }?>
             <script>

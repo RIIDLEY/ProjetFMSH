@@ -9,8 +9,45 @@
     border-radius:10px;
 }
 
+.DivData{
+    color: white;
+    padding: 50px ;
+    background-color: #292b2c;
+    box-shadow:0px 2px 10px rgba(0,0,0,0.3);
+    border-radius:10px;
+}
+
+.InfoFile{
+    border-right: solid;
+}
+
+.cloud{
+    color: white;
+    text-align: center;
+    padding: 50px;
+    width: 50%;
+    margin: 30px;
+    background-color: #292b2c;
+    box-shadow:0px 2px 10px rgba(0,0,0,0.3);
+    border-radius:10px;
+}
+
+.v-line{
+    border-left: thick solid white;
+    height: auto;
+    left: 50%;
+    position: absolute;
+}
+
 .others {
     color:black
+}
+
+.description{
+    width: 10em; /* the element needs a fixed width (in px, em, %, etc) */
+    overflow: hidden; /* make sure it hides the content that overflows */
+    white-space: nowrap; /* don't break the line */
+    text-overflow: ellipsis; /* give the beautiful '...' effect */
 }
 
 #sigma-container {
@@ -22,16 +59,7 @@
     background-color: #E1E1E1
 }
 
-.grandeDivData{
-    color: white;
-    text-align: center;
-    padding: 50px ;
-    width: 50%;
-    margin: 30px auto;
-    background-color: #292b2c;
-    box-shadow:0px 2px 10px rgba(0,0,0,0.3);
-    border-radius:10px;
-}
+
 .divStyle{
     color: white;
     text-align: center;

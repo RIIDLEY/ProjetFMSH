@@ -56,7 +56,7 @@ class Model
             }
             $requete->execute();
             $requete->closeCursor();
-            return $this->lastinsert(["name"=>$infos["name"],"size"=>$infos["size"],"filename"=>$infos["filename"],"tags"=>$infos["tags"]])[0];
+            return $this->IDlastinsert(["name"=>$infos["name"],"size"=>$infos["size"],"filename"=>$infos["filename"],"tags"=>$infos["tags"]])[0];
         } catch (PDOException $e) {
             die('Echec addDoc, erreur n°' . $e->getCode() . ':' . $e->getMessage());
         }
@@ -66,10 +66,10 @@ class Model
     {
 
         try {
-            $requete = $this->bd->prepare('Select Name from fichiers_upload WHERE FileID = :fileID');
+            $requete = $this->bd->prepare('Select * from fichiers_upload WHERE FileID = :fileID');
             $requete->bindValue(':fileID', $fileID);
             $requete->execute();
-            return $requete->fetch(PDO::FETCH_ASSOC);
+            return $requete->fetchAll(PDO::FETCH_ASSOC)[0];
         } catch (PDOException $e) {
             die('Echec getDocByID, erreur n°' . $e->getCode() . ':' . $e->getMessage());
         }
@@ -93,7 +93,7 @@ class Model
     {
 
         try {
-            $requete = $this->bd->prepare('Select Word, Occurence from indexation WHERE FileID = :fileID');
+            $requete = $this->bd->prepare('Select Word, Occurence from indexation WHERE FileID = :fileID ORDER BY Occurence DESC LIMIT 10');
             $requete->bindValue(':fileID', $fileID);
             $requete->execute();
             return $requete->fetchall(PDO::FETCH_ASSOC);
@@ -102,7 +102,7 @@ class Model
         }
     }
 
-    public function lastinsert($infos)
+    public function IDlastinsert($infos)
     {
         try {
             $requete = $this->bd->prepare('SELECT FileID FROM fichiers_upload WHERE Name=:name AND Size=:size AND Filename=:filename AND Tags=:tags');
@@ -113,7 +113,7 @@ class Model
             $requete->execute();
             return $requete->fetchall(PDO::FETCH_COLUMN);
         } catch (PDOException $e) {
-            die('Echec lastinsert, erreur n°' . $e->getCode() . ':' . $e->getMessage());
+            die('Echec IDlastinsert, erreur n°' . $e->getCode() . ':' . $e->getMessage());
         }
     }
 
@@ -179,7 +179,7 @@ class Model
             }while(count($ArrayWord)>=1);
 
             foreach ($arrayDocuID as $value){
-                array_push($arrayDocuName,$this->getDocByID($value["FileID"]));
+                array_push($arrayDocuName,$this->getDocByID($value["FileID"])["Name"]);
             }
 
 

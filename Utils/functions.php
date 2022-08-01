@@ -7,13 +7,17 @@ function stripAccents($str) {
 
 
 function getSizeTags($minOccu,$maxOccu,$OccuCourant){
+    $rectif = 1;
     if ($maxOccu-$minOccu<=0){
         $a = ((50-15)/1);
     }else{
         $a = ((50-15)/($maxOccu-$minOccu));
     }
     $b = 15-$a;
-    return $a*$OccuCourant+$b;
+    if ($minOccu>=4){
+        $rectif = 2;
+    }
+    return ($a*$OccuCourant+$b)/$rectif;
 }
 
 function remove_emoji($string) {
