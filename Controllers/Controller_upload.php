@@ -46,11 +46,15 @@ class Controller_upload extends Controller{
                $tmp_infos = ['name'=>$_POST["Name"], 'description' =>$_POST["Description"],'tags'=>$_POST["Tags"],'filename'=>$filename, 'transcriptFile'=>"None",'type'=>pathinfo($_FILES['fichier']['name'])['extension'], 'size'=>$_FILES['fichier']['size']];
 
                $IdDocu = $m->addDoc($tmp_infos);
+
                $extension = pathinfo("src/Upload/".$filename, PATHINFO_EXTENSION);
                $this->indexation("src/Upload/".$filename,$IdDocu,"Document",$extension);
 
+               $this->PageInfo($IdDocu);
+
+/*
                $arraytmp = $m->getMot($IdDocu);
-               $this->render('cloud',['tabWord'=>$arraytmp,'PathFile'=>"src/Upload/".$filename]);
+               $this->render('cloud',['tabWord'=>$arraytmp,'PathFile'=>"src/Upload/".$filename]);*/
          }
        }else{
            echo "<script>alert(\"Une erreure c'est produite lors de l'upload\")</script>";
@@ -124,7 +128,6 @@ class Controller_upload extends Controller{
 
         $pathFile = "src/Upload/".$infoFile["Filename"];
         $extension = pathinfo($pathFile, PATHINFO_EXTENSION);
-        //$this->render("test",["liste"=>$infoFile]);
         if ($infoFile["Type"] != "pdf" and $infoFile["Type"] != "txt"){
             $TranscriptFile = "src/MediaToText/".$infoFile["TranscriptFile"];
         }else{
@@ -133,7 +136,11 @@ class Controller_upload extends Controller{
 
         $arrayKeyWord = $m->getMot($IdFile);
 
-        $this->render('cloud',['Name'=>$infoFile["Name"],'tabWord'=>$arrayKeyWord,'PathFile'=>$pathFile,'Description'=>$infoFile["Description"],'Tags'=>$infoFile["Tags"],'TranscriptFile'=>$TranscriptFile,'Extension'=>$extension]);
+        $DocSimi = $m->CloudDocumentSimilaire($arrayKeyWord);
+
+        //$this->render("test",["liste"=>$DocSimi]);
+
+        $this->render('cloud',['Name'=>$infoFile["Name"],'tabWord'=>$arrayKeyWord,'PathFile'=>$pathFile,'Description'=>$infoFile["Description"],'Tags'=>$infoFile["Tags"],'TranscriptFile'=>$TranscriptFile,'Extension'=>$extension, "ListeDocuSim"=>$DocSimi]);
     }
 }
 //,["Name"=>$pathFile["Name"],'tabWord'=>$arrayKeyWord,'PathFile'=>$pathFile,'Description'=>$infoFile["Description"],'Tags'=>$infoFile["Tags"],'Transcript'=>$TranscriptFile,'Extension'=>$extension]

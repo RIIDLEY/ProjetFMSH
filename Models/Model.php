@@ -143,6 +143,52 @@ class Model
         }
     }
 
+    public function CloudDocumentSimilaire($ArrayWord){
+
+        try {
+
+            //$sql = "SELECT FileID FROM `indexation` WHERE Word IN ('problèmes', 'femmes') GROUP BY FileID HAVING COUNT(*) = 2";
+
+            $arrayDocuID = array();
+            $arrayDocuName = array();
+
+            do{
+                $sql = "SELECT FileID FROM indexation WHERE Word IN (";
+
+                for ($i = 0;$i<count($ArrayWord);$i++){
+                    $sql .= "'".$ArrayWord[$i]["Word"]."'";
+                    if ($i!=count($ArrayWord)-1){
+                        $sql .= ",";
+                    }
+                }
+                $sql .= ") GROUP BY FileID DESC HAVING COUNT(*) = ".count($ArrayWord)." LIMIT 6";
+
+
+
+                $requete = $this->bd->prepare($sql);
+                $requete->execute();
+                $arrayReturnRequete = $requete->fetchall(PDO::FETCH_ASSOC);
+
+                foreach ($arrayReturnRequete as $value){
+                    if (!in_array($value,$arrayDocuID)){
+                        array_push($arrayDocuID,$value);
+                    }
+                }
+                array_pop($ArrayWord);
+            }while(count($ArrayWord)>=1);
+
+            foreach ($arrayDocuID as $value){
+                array_push($arrayDocuName,$this->getDocByID($value["FileID"]));
+            }
+
+            $shift = array_shift($arrayDocuName);
+            return $arrayDocuName;
+        } catch (PDOException $e) {
+            die('Echec getDocumentbyMot, erreur n°' . $e->getCode() . ':' . $e->getMessage());
+        }
+    }
+
+
     public function getDocumentbyMotV2($ArrayWord)
     {
 
@@ -191,7 +237,9 @@ class Model
     }
 
 
-
+/**
+Fonctions gestion compte
+ **/
 
     public static function addLogin($infos)
     {
