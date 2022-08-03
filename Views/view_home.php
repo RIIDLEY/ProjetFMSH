@@ -14,13 +14,14 @@ include 'Utils/import_sigmaJS.php';
     <div class="row">
         <div class="divStyle col-md-auto">
         <?php
-        if (isset($liste)){
-        foreach ($liste as $key => $value){  ?>
-            <li class="list-group-item">Document : <strong><?=$value?></strong></li>
+        if (isset($ListFiles)){
+            var_dump($ListeKeyWords);
+        foreach ($ListFiles as $key => $value){  ?>
+            <li class="list-group-item">Document : <strong><?=$value["Name"]?></strong></li>
         <?php
         }?>
             <script>
-                var my_javascript_variable = <?php echo json_encode($liste) ?>;
+                var my_javascript_variable = <?php echo json_encode($ListFiles) ?>;
             </script>
         <?php } ?>
     </div>

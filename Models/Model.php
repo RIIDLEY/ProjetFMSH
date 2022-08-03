@@ -117,29 +117,17 @@ class Model
         }
     }
 
-    public function getListMot($mot)
+    public function getListMotsByFilID($InfoFile)
     {
-
+        $InfoFileArray = array("FileID"=>$InfoFile["FileID"],"FileName"=>$InfoFile["Name"]);
         try {
-            $requete = $this->bd->prepare('Select * from indexation WHERE Word = :word ORDER BY Occurence DESC');
-            $requete->bindValue(':word', $mot);
+            $requete = $this->bd->prepare('Select Word from indexation WHERE FileID = :FileID ORDER BY Occurence DESC LIMIT 5');
+            $requete->bindValue(':FileID', $InfoFile["FileID"]);
             $requete->execute();
-            return $requete->fetchall(PDO::FETCH_NUM);
+            //return $requete->fetchall(PDO::FETCH_NUM);
+            return array_merge($InfoFileArray,array("ListKeyWords"=>$requete->fetchall(PDO::FETCH_NUM)));
         } catch (PDOException $e) {
-            die('Echec getListMot, erreur n°' . $e->getCode() . ':' . $e->getMessage());
-        }
-    }
-
-    public function getDocumentbyMot($mot)
-    {
-
-        try {
-            $requete = $this->bd->prepare('Select FileID from indexation WHERE Word = :word ORDER BY Occurence DESC');
-            $requete->bindValue(':word', $mot);
-            $requete->execute();
-            return $requete->fetchall(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            die('Echec getDocumentbyMot, erreur n°' . $e->getCode() . ':' . $e->getMessage());
+            die('Echec getListMotsByFilID, erreur n°' . $e->getCode() . ':' . $e->getMessage());
         }
     }
 
@@ -225,7 +213,7 @@ class Model
             }while(count($ArrayWord)>=1);
 
             foreach ($arrayDocuID as $value){
-                array_push($arrayDocuName,$this->getDocByID($value["FileID"])["Name"]);
+                array_push($arrayDocuName,$this->getDocByID($value["FileID"]));
             }
 
 
@@ -235,6 +223,9 @@ class Model
             die('Echec getDocumentbyMotV2, erreur n°' . $e->getCode() . ':' . $e->getMessage());
         }
     }
+
+
+
 
 
 /**
