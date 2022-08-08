@@ -96,7 +96,7 @@ require('view_begin.php');
                 $i=0;
                 foreach($ListeDocuSim as $data){
                     ?>
-                    <a href="<?=$data["FileID"]?>" style="text-decoration: none;">
+                    <a href="?controller=cloud&action=PageInfo&FileId=<?=$data["FileID"]?>" style="text-decoration: none;">
                     <div class="videoSimi">
                         <p> Titre : <?=$data["Name"]?></p>
                         <p> Description : <?=$data["Description"]?></p>

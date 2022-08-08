@@ -5,15 +5,28 @@ if (session_status() != 2){
 }
 
 ?>
+    <script>
+        var element = document.getElementById("admin");//Modifie la navbar en fonction de la page actuel
+        element.classList.add("active");
 
+    </script>
 <?php
 if (isset($_SESSION['admin'])) {//Si la variable existe
     if ($_SESSION['admin'] === true) {?>
 
+        <div class="container">
+            <div class="row">
+                <div class="col buuttonAdmin">
+                    <a href="?controller=upload" style="text-decoration:none;color: inherit;">Outils d'Upload</a>
+                </div>
+                <div class="col buuttonAdmin">
+                    <a href="?controller=login&action=deco" style="text-decoration:none;color: inherit;">Déconnexion</a>
+                </div>
 
-        <a href="?controller=home">Accueil</a>
-        <a href="?controller=upload">upload</a>
-        <a href="?controller=login&action=deco">Deco</a>
+            </div>
+        </div>
+
+
 
 
         <?php
@@ -29,8 +42,7 @@ if (isset($_SESSION['admin'])) {//Si la variable existe
                 <input type="reset" value="Reset">
             </form>
             <br>
-            <button onclick="location.href='?controller=register&action=home'" type="button">Page de création de compte</button>
-            <button onclick="location.href='?controller=home&action=home'" type="button">Page d'accueil</button>
+            <!--<button onclick="location.href='?controller=register&action=home'" type="button">Page de création de compte</button>-->
         </center>
 
 
@@ -47,8 +59,7 @@ if (isset($_SESSION['admin'])) {//Si la variable existe
             <input type="reset" value="Reset">
         </form>
         <br>
-        <button onclick="location.href='?controller=register&action=home'" type="button">Page de création de compte</button>
-        <button onclick="location.href='?controller=home&action=home'" type="button">Page d'accueil</button>
+        <!--<button onclick="location.href='?controller=register&action=home'" type="button">Page de création de compte</button>-->
     </center>
 
     <?php

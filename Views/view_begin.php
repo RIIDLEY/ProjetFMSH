@@ -14,6 +14,27 @@
 <link rel="stylesheet" href="src/css/main.css">
 <script src="src/js/bootstrap-tagsinput.min.js"></script>
 <body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <!--<img src="Assets/img/logo_citu.png" width="60" height="60" alt="">-->
+    <span class="navbar-brand mb-0 h1" style="padding: 10px">RIISH</span>
+    <span class="navbar-brand mb-0 h1">|</span>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+            <a class="nav-item nav-link" href="?controller=home" id="home">Accueil</a>
+            <?php
+            if (isset($_SESSION['admin'])) {//Si la variable existe
+                if ($_SESSION['admin'] === true) {//si c'est un admin
+                    echo '<a class="nav-item nav-link" href="?controller=toolsadmin" id="admin">Espace membre</a>';//ajoute le bouton de deconnection
+                }else{
+                    echo '<a class="nav-item nav-link" href="?controller=toolsadmin" id="admin">Espace membre</a>';
 
+                }
+            }else{
+                echo '<a class="nav-item nav-link" href="?controller=toolsadmin" id="admin">Espace membre</a>';
+
+            }
+            ?>
+        </div>
+    </div>
+</nav>
 		<main>
-            <h1>RIISH (Recherche d'informations </h1>
