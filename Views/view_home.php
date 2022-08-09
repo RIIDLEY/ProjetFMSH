@@ -29,7 +29,7 @@ include 'Utils/import_sigmaJS.php';
 
         foreach ($ListFiles as $key => $value){ ?>
 
-            <a href="?controller=cloud&action=PageInfo&FileId=<?=$value["FileID"]?>" target="_blank"><li class="list-group-item">Document : <strong><?=$value["Name"]?></strong></li></a>
+            <a href="?controller=cloud&action=PageInfo&FileId=<?=$value["FileID"]?>" target="_blank" style="text-decoration:none;color: inherit;"><li class="list-group-item">Document : <strong><?=$value["Name"]?></strong></li></a>
         <?php
         }?>
             <script>
@@ -40,6 +40,7 @@ include 'Utils/import_sigmaJS.php';
         <div class="col">
             <div id='sigma-container'></div>
         </div>
+
     </div>
         <div class="row">
             <di class="col DivTools">
@@ -48,6 +49,18 @@ include 'Utils/import_sigmaJS.php';
                 <button id="degreeSortant" class="btn btn-primary" style="margin: 10px">Degrés sortant</button>
                 <button id="textEtat" class="btn btn-primary" style="margin: 10px">Afficher les labels</button>
                 <button id="resetdegree" class="btn btn-primary" style="margin: 10px">Reinitialiser</button>
+            </di>
+
+            <di class="col DivDataInfo" id="DivInfo" style="display: none;">
+                <h4><u>Informations :</u></h4>
+                <ul>
+                    <span><strong>Titre : </strong><span id="TitleInfo"></span></span>
+                    <span id="DescInfoLI" style="display: none;"><strong>Description : </strong><span id="DescInfo"></span></span>
+                    <span id="InDegreeInfoLI" style="display: none;"><strong>Degrée entrant : </strong><span id="InDegreeInfo"></span></span>
+                    <span id="OutDegreeInfoLI" style="display: none;"><strong>Degrée sortant : </strong><span id="OutDegreeInfo"></span></span>
+                    <span style="display: none;" id="LinkInfoP" >Plus d'information <a href="#" id="LinkInfoA" target="_blank">ici</a></span>
+                </ul>
+
             </di>
         </div>
     </div>
@@ -77,7 +90,7 @@ if (isset($ListeKeyWords)){?>
 
  /*-----------------------------------------------------------------------*/
         var ArrayInfos = <?php echo json_encode($ListeKeyWords); ?>;//get le tableau d'information
-
+        var ArrayInfosDesc = <?php echo json_encode($ListFiles); ?>;
         var s = new sigma(
             {
                 renderer: {
@@ -111,7 +124,9 @@ if (isset($ListeKeyWords)){?>
                 color: '#0080ff',
                 originalColor: '#0080ff',
                 fileID : ArrayInfos[i]["FileID"],
-                outDegree : 0
+                Description : ArrayInfosDesc[i]["Description"],
+                outDegree : 0,
+                inDegree : 0
             });
             var Arraytmp = ArrayInfos[i]["ListKeyWords"];//get les tags de la ligne courante
             KeyWordsArraySigma.push.apply(KeyWordsArraySigma, Arraytmp);//push dans le tableau
@@ -129,6 +144,8 @@ if (isset($ListeKeyWords)){?>
                 originSize : 2,
                 color: '#ff0000',
                 originalColor: '#ff0000',
+                Description : "Mot-clé",
+                outDegree : 0,
                 inDegree: 0
             });
 
@@ -170,12 +187,37 @@ if (isset($ListeKeyWords)){?>
         window.setTimeout(function() {s.killForceAtlas2()}, 10000);
 
         s.bind('clickNode', function(e) {
-            console.log("Voisin");
-            console.log(e.data.node.outDegree);
+
+            document.getElementById("DivInfo").style.display = "block";
+            document.getElementById("TitleInfo").textContent = e.data.node.label;
+
+            if (e.data.node.Description!="Mot-clé"){
+
+                document.getElementById("OutDegreeInfoLI").style.display = "block";
+                document.getElementById("OutDegreeInfo").textContent = e.data.node.outDegree;
+
+                document.getElementById("DescInfoLI").style.display = "block";
+                document.getElementById("DescInfo").textContent = e.data.node.Description;
+
+                document.getElementById("InDegreeInfoLI").style.display = "none";
+
+                document.getElementById("LinkInfoP").style.display = "block";
+                document.getElementById("LinkInfoA").href = "?controller=cloud&action=PageInfo&FileId="+e.data.node.fileID;
+            }else{
+
+                document.getElementById("DescInfoLI").style.display = "none";
+
+                document.getElementById("OutDegreeInfoLI").style.display = "none";
+
+                document.getElementById("LinkInfoP").style.display = "none";
+
+                document.getElementById("InDegreeInfoLI").style.display = "block";
+                document.getElementById("InDegreeInfo").textContent = e.data.node.inDegree;
+            }
+
             var nodeId = e.data.node.id,
                 toKeep = s.graph.neighbors(nodeId);
             toKeep[nodeId] = e.data.node;
-            console.log(toKeep);
             s.graph.nodes().forEach(function(n) {
                 if (toKeep[n.id])
                     n.color = '#24ff03';
@@ -197,6 +239,7 @@ if (isset($ListeKeyWords)){?>
 
         document.addEventListener('keydown', function(event){
             if(event.key === "Escape"){
+                document.getElementById("DivInfo").style.display = "none";
                 s.graph.nodes().forEach(function(n) {
                     n.color = n.originalColor,
                         n.hidden = false;

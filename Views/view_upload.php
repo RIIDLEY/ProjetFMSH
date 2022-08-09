@@ -15,7 +15,7 @@ if (isset($_SESSION['admin'])) {//Si la variable existe
 
         <div class="row" style="padding: 2%">
             <div class="col-md-6">
-                <input type="text" class="form-control" name="Name" placeholder="Nom du document" required>
+                <input type="text" class="form-control" name="Name" placeholder="Nom du document" maxLength="50" required>
             </div>
             <div class="col-md-6">
                 <input type="text" class="form-control" name="Description" placeholder="Description" maxLength="120" required>

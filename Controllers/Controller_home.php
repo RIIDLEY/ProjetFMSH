@@ -19,7 +19,6 @@ class Controller_home extends Controller{
             $tabLemma = array_map("utf8_encode", $tabLemma );
             $splitKeyWordsLower = array_map('strtolower', $splitKeyWords);
 
-
             $ListFiles = $m->getDocumentbyMotV2($tabLemma);
             $ListKeyWords = array();
             foreach ($ListFiles as $value) {
