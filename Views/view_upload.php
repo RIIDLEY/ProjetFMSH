@@ -7,8 +7,6 @@ if (isset($_SESSION['admin'])) {//Si la variable existe
         <script type="text/javascript" src="src/js/Upload.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
-        <a href="?controller=home">Accueil</a>
-
     <div class="grandeDivData container">
     <u><h1>Formulaire d'upload :</h1></u>
     <form action = "?controller=upload&action=upload" method="post" enctype="multipart/form-data" style="display:inline;">
