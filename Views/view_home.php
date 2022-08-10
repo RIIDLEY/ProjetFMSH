@@ -186,7 +186,7 @@ if (isset($ListeKeyWords)){?>
         s.startForceAtlas2();
         window.setTimeout(function() {s.killForceAtlas2()}, 10000);
 
-        s.bind('clickNode', function(e) {
+        s.bind('clickNode', function(e) {//si un node est selectionné
 
             document.getElementById("DivInfo").style.display = "block";
             document.getElementById("TitleInfo").textContent = e.data.node.label;
@@ -238,7 +238,7 @@ if (isset($ListeKeyWords)){?>
         });
 
         document.addEventListener('keydown', function(event){
-            if(event.key === "Escape"){
+            if(event.key === "Escape"){// si touche echap est pressé, retire les couleurs de voisinage
                 document.getElementById("DivInfo").style.display = "none";
                 s.graph.nodes().forEach(function(n) {
                     n.color = n.originalColor,

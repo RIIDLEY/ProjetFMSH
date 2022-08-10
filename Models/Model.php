@@ -45,6 +45,10 @@ class Model
         return self::$instance;
     }
 
+    /**
+     * Méthode permettant de reference un document dans le DBB
+     */
+
     public function addDoc($infos)
     {
 
@@ -62,6 +66,10 @@ class Model
         }
     }
 
+
+    /**
+     * Méthode permettant de recuperer les informations d'un document avec son ID
+     */
     public function getDocByID($fileID)
     {
 
@@ -75,6 +83,9 @@ class Model
         }
     }
 
+    /**
+     * Méthode permettant d'ajouter des mots clés à la BDD
+     */
     public function addMot($infos)
     {
         try {
@@ -89,6 +100,10 @@ class Model
         }
     }
 
+    /**
+     * Méthode permettant de recuperer les mots clés d'un document
+     */
+
     public function getMot($fileID)
     {
 
@@ -101,6 +116,10 @@ class Model
             die('Echec getMot, erreur n°' . $e->getCode() . ':' . $e->getMessage());
         }
     }
+
+    /**
+     * Méthode permettant de recuperer l'ID du dernier document inseré
+     */
 
     public function IDlastinsert($infos)
     {
@@ -117,6 +136,10 @@ class Model
         }
     }
 
+    /**
+     * Méthode permettant de recuperer l'ID du dernier document inseré
+     */
+
     public function getListMotsByFilID($InfoFile)
     {
         $InfoFileArray = array("FileID"=>$InfoFile["FileID"],"FileName"=>$InfoFile["Name"]);
@@ -131,11 +154,13 @@ class Model
         }
     }
 
+    /**
+     * Méthode permettant de recuperer les documents par rapport au nuage de mot cle courant
+     */
+
     public function CloudDocumentSimilaire($ArrayWord){
 
         try {
-
-            //$sql = "SELECT FileID FROM `indexation` WHERE Word IN ('problèmes', 'femmes') GROUP BY FileID HAVING COUNT(*) = 2";
 
             $arrayDocuID = array();
             $arrayDocuName = array();
@@ -150,8 +175,6 @@ class Model
                     }
                 }
                 $sql .= ") GROUP BY FileID DESC HAVING COUNT(*) = ".count($ArrayWord)." LIMIT 6";
-
-
 
                 $requete = $this->bd->prepare($sql);
                 $requete->execute();
@@ -176,13 +199,14 @@ class Model
         }
     }
 
+    /**
+     * Méthode permettant de recuperer les documents par a la list de mot clé courante
+     */
 
     public function getDocumentbyMotV2($ArrayWord)
     {
 
         try {
-
-            //$sql = "SELECT FileID FROM `indexation` WHERE Word IN ('problèmes', 'femmes') GROUP BY FileID HAVING COUNT(*) = 2";
 
             $arrayDocuID = array();
             $arrayDocuName = array();
@@ -197,8 +221,6 @@ class Model
                     }
                 }
                 $sql .= ") GROUP BY FileID HAVING COUNT(*) = ".count($ArrayWord);
-
-
 
                 $requete = $this->bd->prepare($sql);
                 $requete->execute();

@@ -20,9 +20,9 @@ class Controller_upload extends Controller{
          $idrandom = str_replace(".","",uniqid('', true));
        if(move_uploaded_file($tmp_nom, 'src/Upload/'.$idrandom."_".stripAccents(str_replace(' ', '', $_FILES['fichier']['name'])))){//ajoute le fichier à dossier de stockage du serveur avec la suppression des espaces
 
-           if ($_POST['type'] == "Media") {
+           if ($_POST['type'] == "Media") {//si c'est un fichier audio ou vidéo
 
-           $command = escapeshellcmd("python Script/SpeechToText.py src/Upload/".$idrandom."_".stripAccents(str_replace(' ', '', $_FILES['fichier']['name'])));
+           $command = escapeshellcmd("python Script/SpeechToText.py src/Upload/".$idrandom."_".stripAccents(str_replace(' ', '', $_FILES['fichier']['name'])));//fait la transcription
            $output = shell_exec($command);
            $output = trim($output);
 
@@ -33,28 +33,25 @@ class Controller_upload extends Controller{
                $m = Model::getModel();
                $tmp_infos = ['name'=>$_POST["Name"], 'description' =>$_POST["Description"],'tags'=>$_POST["Tags"],'filename'=>$idrandom."_".stripAccents(str_replace(' ', '', $_FILES['fichier']['name'])), 'transcriptFile'=>$output,'type'=>pathinfo($_FILES['fichier']['name'])['extension'], 'size'=>$_FILES['fichier']['size']];
 
-               $IdDocu = $m->addDoc($tmp_infos);
+               $IdDocu = $m->addDoc($tmp_infos);//ajoute le fichier à la BDD
 
-               $this->indexation("src/MediaToText/".$output,$IdDocu,"Media",false);
+               $this->indexation("src/MediaToText/".$output,$IdDocu,"Media",false);//fait l'indexation
 
-               $this->PageInfo($IdDocu);
+               $this->PageInfo($IdDocu);//affiche la page d'info
            }
 
-         } elseif ($_POST['type'] == "Document") {
+         } elseif ($_POST['type'] == "Document") {//si c'est un document numérique
                $m = Model::getModel();
                $filename = $idrandom."_".stripAccents(str_replace(' ', '', $_FILES['fichier']['name']));
                $tmp_infos = ['name'=>$_POST["Name"], 'description' =>$_POST["Description"],'tags'=>$_POST["Tags"],'filename'=>$filename, 'transcriptFile'=>"None",'type'=>pathinfo($_FILES['fichier']['name'])['extension'], 'size'=>$_FILES['fichier']['size']];
 
-               $IdDocu = $m->addDoc($tmp_infos);
+               $IdDocu = $m->addDoc($tmp_infos);//ajoute le fichier à la BDD
 
                $extension = pathinfo("src/Upload/".$filename, PATHINFO_EXTENSION);
-               $this->indexation("src/Upload/".$filename,$IdDocu,"Document",$extension);
+               $this->indexation("src/Upload/".$filename,$IdDocu,"Document",$extension);//fait l'indexation
 
-               $this->PageInfo($IdDocu);
+               $this->PageInfo($IdDocu);//affiche la page d'info
 
-/*
-               $arraytmp = $m->getMot($IdDocu);
-               $this->render('cloud',['tabWord'=>$arraytmp,'PathFile'=>"src/Upload/".$filename]);*/
          }
        }else{
            echo "<script>alert(\"Une erreure c'est produite lors de l'upload\")</script>";
@@ -106,7 +103,7 @@ class Controller_upload extends Controller{
 
         $tab_toks = $this->explode_bis(mb_strtolower(stripAccents($texte),"UTF-8"), $separateurs);//séparation
 
-            $command = escapeshellcmd("python Script/lemma.py ".implode(" ", $tab_toks));
+            $command = escapeshellcmd("python Script/lemma.py ".implode(" ", $tab_toks));//fait la lemmatisation
             $output = shell_exec($command);
             $tabLemma = explode("|", $output);
             array_pop($tabLemma);
@@ -124,24 +121,21 @@ class Controller_upload extends Controller{
     public function PageInfo($IdFile)
     {
         $m = Model::getModel();
-        $infoFile = $m->getDocByID($IdFile);
+        $infoFile = $m->getDocByID($IdFile);//get les infos du doc via son ID
 
         $pathFile = "src/Upload/".$infoFile["Filename"];
         $extension = pathinfo($pathFile, PATHINFO_EXTENSION);
-        if ($infoFile["Type"] != "pdf" and $infoFile["Type"] != "txt"){
-            $TranscriptFile = "src/MediaToText/".$infoFile["TranscriptFile"];
+        if ($infoFile["Type"] != "pdf" and $infoFile["Type"] != "txt"){//si c'est un fichier audio/vidéo
+            $TranscriptFile = "src/MediaToText/".$infoFile["TranscriptFile"];//get son fichier de transcription
         }else{
             $TranscriptFile = "None";
         }
 
-        $arrayKeyWord = $m->getMot($IdFile);
+        $arrayKeyWord = $m->getMot($IdFile);//Recupere la liste de mots clés du document courant
 
-        $DocSimi = $m->CloudDocumentSimilaire($arrayKeyWord);
-
-        //$this->render("test",["liste"=>$DocSimi]);
+        $DocSimi = $m->CloudDocumentSimilaire($arrayKeyWord);//recupere la liste des documents similaires
 
         $this->render('cloud',['Name'=>$infoFile["Name"],'tabWord'=>$arrayKeyWord,'PathFile'=>$pathFile,'Description'=>$infoFile["Description"],'Tags'=>$infoFile["Tags"],'TranscriptFile'=>$TranscriptFile,'Extension'=>$extension, "ListeDocuSim"=>$DocSimi]);
     }
 }
-//,["Name"=>$pathFile["Name"],'tabWord'=>$arrayKeyWord,'PathFile'=>$pathFile,'Description'=>$infoFile["Description"],'Tags'=>$infoFile["Tags"],'Transcript'=>$TranscriptFile,'Extension'=>$extension]
 ?>
